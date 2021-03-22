@@ -1,0 +1,594 @@
+{
+	"info": {
+		"_postman_id": "1a4459f7-b2fa-4731-ba5f-0570794e63fa",
+		"name": "Wizeline S2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Todoist",
+			"item": [
+				{
+					"name": "Read (active) tasks",
+					"item": [
+						{
+							"name": "Get (all) active tasks",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Empty task name\", function () {\r",
+											"    pm.expect(pm.response.text()).to.be.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Task with content\", function () {\r",
+											"    pm.expect(pm.response.text()).to.be.not.empty;\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}",
+									"host": [
+										"{{baseUrl}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get (an) active task",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Task contains 'task' word\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"task\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Task contains 'another' word\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"another\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{taskId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{taskId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = pm.response.json()",
+									"",
+									"pm.test(\"Status code is 2xx\", function () {",
+									"    pm.response.to.be.success;",
+									"});",
+									"",
+									"pm.test(\"Status code is negative\", function () {",
+									"    pm.response.to.be.serverError;",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 300ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);",
+									"});",
+									"",
+									"pm.test(\"Response time is over than 400ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.above(300);",
+									"});",
+									"",
+									"var schemaContent = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"content\": {\"type\": \"string\"}",
+									"    }",
+									"};",
+									"",
+									"pm.test('Schema is valid - Content is string', () =>{",
+									"    pm.response.to.have.jsonSchema(schemaContent)",
+									"})",
+									"",
+									"var schemaPriority = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"priority\":{\"type\": \"string\"}",
+									"    }",
+									"};",
+									"",
+									"pm.test('Schema is valid - projectId', () =>{",
+									"    pm.response.to.have.jsonSchema(schemaPriority)",
+									"})"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Create new task",
+					"item": [
+						{
+							"name": "Create new task",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Task contains 'test' word\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"test\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Task contains 'another' word\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"another\");\r",
+											"});\r",
+											"\r",
+											"var schemaContent = {\r",
+											"    \"type\": \"object\",\r",
+											"    \"properties\": {\r",
+											"        \"content\": {\"type\": \"string\"}\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"pm.test('Schema is valid - Content string', () =>{\r",
+											"    pm.response.to.have.jsonSchema(schemaContent)\r",
+											"})\r",
+											"\r",
+											"var schemaPID = {\r",
+											"    \"type\": \"object\",\r",
+											"    \"properties\": {\r",
+											"        \"projectId\": {\"type\": \"char\"}\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"pm.test('Schema is valid - projectId', () =>{\r",
+											"    pm.response.to.have.jsonSchema(schemaPID)\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "X-Requested-Id",
+										"value": "$(uuidgen)",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"completed\": false,\r\n    \"content\": \"task to test\",\r\n    \"due\": {\r\n        \"date\": \"2021-03-23\"\r\n    },\r\n    \"project_id\": {{projectId}}\r\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}",
+									"host": [
+										"{{baseUrl}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 2xx\", function () {",
+									"    pm.response.to.be.success;",
+									"});",
+									"",
+									"pm.test(\"Status code is negative\", function () {",
+									"    pm.response.to.be.serverError;",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is over than 400ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.above(300);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Update task",
+					"item": [
+						{
+							"name": "Change task status",
+							"item": [
+								{
+									"name": "Complete/Close task",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{baseUrl}}/{{taskId}}/close",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{taskId}}",
+												"close"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Reopen task",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/{{taskId}}/reopen",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"{{taskId}}",
+												"reopen"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Update task (content)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"content\": \"Ready 4 being updated\",\r\n    \"priority\": 2\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/{{taskId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{taskId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"//Codes",
+									"pm.test(\"Status code is 2xx\", function () {",
+									"    pm.response.to.be(204);",
+									"});",
+									"",
+									"pm.test(\"Status code is negative\", function () {",
+									"    pm.response.to.be.serverError;",
+									"});",
+									"",
+									"//Response time",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is over than 400ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.above(300);",
+									"});",
+									"",
+									"//Schemas",
+									"var schemaContent = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"content\": {\"type\": \"string\"}",
+									"    }",
+									"};",
+									"",
+									"pm.test('Schema is valid - Content is string', () =>{",
+									"    pm.response.to.have.jsonSchema(schemaContent)",
+									"})",
+									"",
+									"var schemaPriority = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"priority\":{\"type\": \"string\"}",
+									"    }",
+									"};",
+									"",
+									"pm.test('Schema is valid - projectId', () =>{",
+									"    pm.response.to.have.jsonSchema(schemaPriority)",
+									"})"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Delete task",
+					"item": [
+						{
+							"name": "Delete task",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/{{taskId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"{{taskId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"//Code",
+									"pm.test(\"Status code is 2xx\", function () {",
+									"    pm.response.to.be(204);",
+									"});",
+									"",
+									"pm.test(\"Status code is negative\", function () {",
+									"    pm.response.to.be.serverError;",
+									"});",
+									"",
+									"",
+									"//Response time",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is over than 400ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.above(300);",
+									"});",
+									"",
+									"",
+									"//Content",
+									"var tempId = pm.environment.get(\"taskId\");",
+									"",
+									"pm.test(\"Task exists\", function(){",
+									"    pm.expect(pm.response.tempId).to.exist;",
+									"})",
+									"",
+									"pm.test(\"Task exists\", function(){",
+									"    pm.expect(pm.response.tempId).to.not.exist;",
+									"})",
+									"",
+									"",
+									"//Schemas (?)",
+									"var schemaContent = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"content\": {\"type\": \"string\"}",
+									"    }",
+									"};",
+									"",
+									"pm.test('Schema is valid - Content string', () =>{",
+									"    pm.response.to.have.jsonSchema(schemaContent)",
+									"})",
+									"",
+									"var schemaPID = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"projectId\": {\"type\": \"char\"}",
+									"    }",
+									"};",
+									"",
+									"pm.test('Schema is valid - projectId', () =>{",
+									"    pm.response.to.not.have.jsonSchema(schemaPID)",
+									"})",
+									""
+								]
+							}
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
